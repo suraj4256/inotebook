@@ -3,7 +3,7 @@ import noteContext from '../context/notes/noteContext'
 import Noteitem from './Noteitem';
 import { useNavigate } from 'react-router-dom';
 const Notes = () => {
-    const context = useContext(noteContext);
+  const context = useContext(noteContext);
   const {notes,getNotes} = context;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);

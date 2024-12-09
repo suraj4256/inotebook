@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fetchuser = require("../middleware/fetchuser");
 const Signature = "Suraj12365";
-// Create User using: POST "/api/auth/register" 
+// Create User using: POST "/api/auth/register"
 router.post(
   "/register",
   [
@@ -17,7 +17,7 @@ router.post(
       .withMessage("Password must be at least 8 characters long"),
   ],
   async (req, res) => {
-    let success=false;
+    let success = false;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       success = false;
@@ -32,7 +32,10 @@ router.post(
         success = false;
         return res
           .status(400)
-          .json({ success, errors: [{ msg: "User already exists with this email" }] });
+          .json({
+            success,
+            errors: [{ msg: "User already exists with this email" }],
+          });
       } else {
         const salt = await bcrypt.genSalt(10);
         const secPass = await bcrypt.hash(req.body.password, salt);
@@ -50,7 +53,7 @@ router.post(
         };
         const token = jwt.sign(data, Signature);
         success = true;
-        return res.json({success,token});
+        return res.json({ success, token });
       }
     } catch (err) {
       console.error("Error creating User", err);
@@ -76,7 +79,7 @@ router.post(
         success = false;
         return res
           .status(400)
-          .json({success, errors: "Please enter correct credentials" });
+          .json({ success, errors: "Please enter correct credentials" });
       } else {
         const passCompare = await bcrypt.compare(password, user.password);
         if (!passCompare) {
@@ -92,8 +95,8 @@ router.post(
         };
 
         const token = jwt.sign(data, Signature);
-        success =true;
-        return res.json({ success,token});
+        success = true;
+        return res.json({ success, token });
       }
     } catch (error) {
       console.error("Error creating User", error);
@@ -104,15 +107,14 @@ router.post(
 
 // Get logged in user details
 
-router.post('/getuser',fetchuser,async (req,res)=>{
+router.post("/getuser", fetchuser, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
     res.send(user);
-    
   } catch (error) {
     console.error("Error creating User", error);
     return res.status(500).send("Server Error");
   }
-})
+});
 
 module.exports = router;
